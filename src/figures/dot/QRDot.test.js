@@ -1,7 +1,7 @@
 import QRDot from './QRDot';
 import fs from 'fs';
 import path from 'path';
-import { Canvas } from 'skia-canvas/lib';
+import { createCanvas } from 'canvas';
 
 describe('Test QRDot class', () => {
   const canvasSize = 100;
@@ -9,7 +9,7 @@ describe('Test QRDot class', () => {
   let canvasContext;
 
   beforeAll(() => {
-    canvas = new Canvas(canvasSize, canvasSize);
+    canvas = createCanvas(canvasSize, canvasSize);
     canvasContext = canvas.getContext('2d');
   });
 

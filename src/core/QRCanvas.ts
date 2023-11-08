@@ -1,17 +1,36 @@
-import calculateImageSize from '../tools/calculateImageSize.js';
-import errorCorrectionPercents from '../constants/errorCorrectionPercents.js';
-import QRDot from '../figures/dot/QRDot.js';
-import QRCornerSquare from '../figures/cornerSquare/QRCornerSquare.js';
-import QRCornerDot from '../figures/cornerDot/QRCornerDot.js';
-import defaultOptions, { RequiredOptions } from './QROptions.js';
-import gradientTypes from '../constants/gradientTypes.js';
-import { QRCode, Gradient, FilterFunction, Options } from '../types';
-import getMode from '../tools/getMode.js';
-import { Canvas, CanvasRenderingContext2D, ExportFormat, RenderOptions, loadImage, Image } from 'skia-canvas';
-import qrcode from 'qrcode-generator';
+import { Canvas, CanvasGradient, CanvasRenderingContext2D, Image, createCanvas, loadImage } from 'canvas'; // Import from the 'canvas' library
 import { promises as fs } from 'fs';
+import qrcode from 'qrcode-generator';
+import errorCorrectionPercents from '../constants/errorCorrectionPercents.js';
+import gradientTypes from '../constants/gradientTypes.js';
+import QRCornerDot from '../figures/cornerDot/QRCornerDot.js';
+import QRCornerSquare from '../figures/cornerSquare/QRCornerSquare.js';
+import QRDot from '../figures/dot/QRDot.js';
+import calculateImageSize from '../tools/calculateImageSize.js';
+import getMode from '../tools/getMode.js';
 import mergeDeep from '../tools/merge.js';
 import sanitizeOptions from '../tools/sanitizeOptions.js';
+import { FilterFunction, Gradient, Options, QRCode } from '../types';
+import defaultOptions, { RequiredOptions } from './QROptions.js';
+
+export type ExportFormat = 'image/png' | 'image/jpeg' | 'application/pdf' | 'raw';
+
+export interface RenderOptions {
+  /** Page to export: Defaults to 1 (i.e., first page) */
+  page?: number;
+
+  /** Background color to draw beneath transparent parts of the canvas */
+  matte?: string;
+
+  /** Number of pixels per grid ‘point’ (defaults to 1) */
+  density?: number;
+
+  /** Quality for lossy encodings like JPEG (0.0–1.0) */
+  quality?: number;
+
+  /** Convert text to paths for SVG exports */
+  outline?: boolean;
+}
 
 const squareMask = [
   [1, 1, 1, 1, 1, 1, 1],
@@ -49,7 +68,7 @@ export default class QRCanvas {
 
     this._width = mergedOptions.width;
     this._height = mergedOptions.height;
-    this._canvas = new Canvas(this._width, this._height);
+    this._canvas = createCanvas(this._width, this._height, 'svg');
 
     this._options = mergedOptions;
 
@@ -470,9 +489,9 @@ export default class QRCanvas {
    * @param format Supported types: "png" | "jpg" | "jpeg" | "pdf" | "svg"
    * @param options export options see https://github.com/samizdatco/skia-canvas#tobufferformat-page-matte-density-quality-outline
    */
-  async toBuffer(format: ExportFormat = 'png', options?: RenderOptions): Promise<Buffer> {
+  async toBuffer(format: 'application/pdf' | 'raw' | 'image/jpeg' | 'image/png' = 'image/png'): Promise<Buffer> {
     await this.created;
-    return this._canvas.toBuffer(format, options);
+    return this._canvas.toBuffer(format as 'image/png', {}); // THIS SHIT GOT ME WILD
   }
 
   /**
@@ -481,9 +500,9 @@ export default class QRCanvas {
    * @param format Supported types: "png" | "jpg" | "jpeg" | "pdf" | "svg"
    * @param options export options see https://github.com/samizdatco/skia-canvas#tobufferformat-page-matte-density-quality-outline
    */
-  async toDataUrl(format: ExportFormat = 'png', options?: RenderOptions): Promise<string> {
+  async toDataUrl(format: 'image/png' | 'image/jpeg' = 'image/png'): Promise<string> {
     await this.created;
-    return this._canvas.toDataURL(format, options);
+    return this._canvas.toDataURL(format as 'image/png');
   }
 
   /**
@@ -494,8 +513,8 @@ export default class QRCanvas {
    * @param options export options see https://github.com/samizdatco/skia-canvas#tobufferformat-page-matte-density-quality-outline
    * @returns a promise that resolves once the file was written to disk
    */
-  async toFile(filePath: string, format: ExportFormat = 'png', options?: RenderOptions): Promise<void> {
+  async toFile(filePath: string, format: ExportFormat = 'image/png'): Promise<void> {
     await this.created;
-    return fs.writeFile(filePath, await this._canvas.toBuffer(format, options));
+    return fs.writeFile(filePath, this._canvas.toBuffer(format as 'image/png'));
   }
 }
