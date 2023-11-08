@@ -1,6 +1,6 @@
 {
-  "name": "@h7ioo/styled-qr-code-node",
-  "version": "1",
+  "name": "@H7ioo/styled-qr-code-node",
+  "version": "1.0.0",
   "description": "Add a style and an image to your QR code",
   "files": [
     "dist"
