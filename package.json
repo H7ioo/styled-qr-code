@@ -1,6 +1,6 @@
 {
-  "name": "@loskir/styled-qr-code-node",
-  "version": "1.5.1",
+  "name": "@h7ioo/styled-qr-code-node",
+  "version": "1",
   "description": "Add a style and an image to your QR code",
   "files": [
     "dist"
@@ -54,12 +54,5 @@
     "logo",
     "design"
   ],
-  "author": {
-    "name": "Kirill Loskutov",
-    "email": "kl@sinker.ru"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/loskir/styled-qr-code/issues"
-  }
+  "license": "MIT"
 }
