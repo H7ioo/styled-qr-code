@@ -1,5 +1,5 @@
 {
-  "name": "@H7ioo/styled-qr-code-node",
+  "name": "@h7ioo/styled-qr-code-node",
   "version": "1.0.0",
   "description": "Add a style and an image to your QR code",
   "files": [
@@ -36,7 +36,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/H7ioo/styled-qr-code.git"
+    "url": "git+https://github.com/h7ioo/styled-qr-code.git"
   },
   "keywords": [
     "qr",
